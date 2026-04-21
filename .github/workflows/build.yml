@@ -13,8 +13,12 @@ jobs:
     - name: Setup build environment
       run: |
         sudo apt update
-        sudo apt install -y git make gcc bc libssl-dev device-tree-compiler \
-        bison flex libelf-dev cpio binutils gcc-aarch64-linux-gnu
+        sudo apt install -y git make gcc bc libssl-dev bison flex libelf-dev cpio binutils gcc-aarch64-linux-gnu
+        git clone https://git.kernel.org/pub/scm/utils/dtc/dtc.git
+        cd dtc
+        make
+        sudo make install
+        cd ..
 
     - name: Build kernel
       run: |
@@ -24,9 +28,3 @@ jobs:
         scripts/config --disable LTO_CLANG
         scripts/config --disable THINLTO
         make -j$(nproc)
-
-    - name: Upload Image.gz-dtb
-      uses: actions/upload-artifact@v4
-      with:
-        name: Image.gz-dtb
-        path: arch/arm64/boot/Image.gz-dtb
