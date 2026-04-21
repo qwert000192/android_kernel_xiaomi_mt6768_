@@ -21,6 +21,8 @@ jobs:
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         make merlin_defconfig
+        scripts/config --disable LTO_CLANG
+        scripts/config --disable THINLTO
         make -j$(nproc)
 
     - name: Upload Image.gz-dtb
