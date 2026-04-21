@@ -15,6 +15,13 @@ jobs:
         sudo apt update
         sudo apt install -y git make bc libssl-dev bison flex libelf-dev cpio binutils device-tree-compiler
 
+    - name: Fix dtc (remove built-in)
+      run: |
+        # Удаляем встроенный dtc, чтобы использовать системный
+        rm -f scripts/dtc/dtc
+        rm -f scripts/dtc/dtc-lexer.lex.c_shipped
+        rm -f scripts/dtc/dtc-parser.tab.c_shipped
+
     - name: Build kernel
       run: |
         export ARCH=arm64
@@ -24,7 +31,8 @@ jobs:
         scripts/config --disable THINLTO
         scripts/config --disable MTK_TEE_GP_SUPPORT
         scripts/config --disable MICROTRUST_TEE_SUPPORT
-        make -j$(nproc) DTC=/usr/bin/dtc
+        # Отключаем сборку dtc и используем системный
+        make -j$(nproc) DTC=/usr/bin/dtc CONFIG_DTC=y
 
     - name: Upload Image.gz-dtb
       uses: actions/upload-artifact@v4
