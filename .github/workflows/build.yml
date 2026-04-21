@@ -15,16 +15,7 @@ jobs:
         sudo apt update
         sudo apt install -y git make bc libssl-dev bison flex libelf-dev cpio binutils device-tree-compiler clang-14 lld-14
 
-    - name: Fix dtc
-      run: |
-        cd scripts/dtc
-        sed -i 's/^YYLTYPE yylloc;/extern YYLTYPE yylloc;/' dtc-lexer.lex.c_shipped
-        sed -i 's/^YYLTYPE yylloc;/extern YYLTYPE yylloc;/' dtc-lexer.lex.c
-        touch dtc-lexer.lex.c
-        touch dtc-parser.tab.c
-        cd ../..
-
-    - name: Build kernel with clang
+    - name: Build kernel
       run: |
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
@@ -33,7 +24,7 @@ jobs:
         scripts/config --disable THINLTO
         scripts/config --disable MTK_TEE_GP_SUPPORT
         scripts/config --disable MICROTRUST_TEE_SUPPORT
-        make -j$(nproc) CC=clang-14 LD=ld.lld-14 AR=llvm-ar-14 NM=llvm-nm-14 STRIP=llvm-strip-14 OBJCOPY=llvm-objcopy-14 OBJDUMP=llvm-objdump-14 READELF=llvm-readelf-14 DTC=/usr/bin/dtc
+        make -j$(nproc) CC=clang-14 LD=ld.lld-14 AR=llvm-ar-14 NM=llvm-nm-14 STRIP=llvm-strip-14 OBJCOPY=llvm-objcopy-14 OBJDUMP=llvm-objdump-14 READELF=llvm-readelf-14
 
     - name: Upload Image.gz-dtb
       uses: actions/upload-artifact@v4
