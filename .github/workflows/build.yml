@@ -19,7 +19,6 @@ jobs:
       run: |
         cd scripts/dtc
         sed -i 's/^YYLTYPE yylloc;/extern YYLTYPE yylloc;/' dtc-lexer.lex.c_shipped
-        sed -i 's/^YYLTYPE yylloc;/extern YYLTYPE yylloc;/' dtc-lexer.lex.c
         cd ../..
 
     - name: Build kernel
